@@ -39,7 +39,7 @@ MCP 커넥터입니다. 모델이 API 를 **찾고, 읽고, 실행할** 수 있�
   "mcpServers": {
     "yesstock": {
       "command": "npx",
-      "args": ["-y", "yesstock-openapi-mcp@latest"],
+      "args": ["-y", "https://github.com/narcis25/yesstock-openapi-mcp/releases/latest/download/yesstock-openapi-mcp.tgz"],
       "env": {
         "WEBOPENAPI_GATEWAY_URL": "https://test-openapi.yesstock.com",
         "WEBOPENAPI_ACCESS_KEY": "발급받은_access_key",
@@ -68,7 +68,7 @@ MCP 커넥터입니다. 모델이 API 를 **찾고, 읽고, 실행할** 수 있�
     "yesstock": {
       "type": "stdio",
       "command": "npx",
-      "args": ["-y", "yesstock-openapi-mcp@latest"],
+      "args": ["-y", "https://github.com/narcis25/yesstock-openapi-mcp/releases/latest/download/yesstock-openapi-mcp.tgz"],
       "env": {"...": "위와 동일"}
     }
   }
@@ -80,7 +80,7 @@ MCP 커넥터입니다. 모델이 API 를 **찾고, 읽고, 실행할** 수 있�
 ```toml
 [mcp_servers.yesstock]
 command = "npx"
-args = ["-y", "yesstock-openapi-mcp@latest"]
+args = ["-y", "https://github.com/narcis25/yesstock-openapi-mcp/releases/latest/download/yesstock-openapi-mcp.tgz"]
 env = { WEBOPENAPI_GATEWAY_URL = "https://test-openapi.yesstock.com", WEBOPENAPI_ACCESS_KEY = "...", WEBOPENAPI_SECRET_KEY = "..." }
 ```
 
@@ -93,7 +93,7 @@ claude mcp add yesstock \
   --env WEBOPENAPI_GATEWAY_URL=https://test-openapi.yesstock.com \
   --env WEBOPENAPI_ACCESS_KEY=... \
   --env WEBOPENAPI_SECRET_KEY=... \
-  -- npx -y yesstock-openapi-mcp@latest
+  -- npx -y https://github.com/narcis25/yesstock-openapi-mcp/releases/latest/download/yesstock-openapi-mcp.tgz
 ```
 
 ### 그 밖의 설정값
@@ -104,7 +104,7 @@ claude mcp add yesstock \
 | ----------------------------- | -------------------------------------------------------------- |
 | `WEBOPENAPI_SYMBOL_TYPES`     | 종목마스터 구분값. 비우면 주식 전체, 순수 주식만 쓰려면 `8,9`   |
 | `WEBOPENAPI_EXCHANGE_CODE`    | 거래소코드. 기본 `XKRX`                                        |
-| `WEBOPENAPI_NO_UPDATE_CHECKS` | `1` 이면 기동할 때 새 버전을 확인하지 않습니다 (`.mcpb` 에만 해당) |
+| `WEBOPENAPI_NO_UPDATE_CHECKS` | `1` 이면 기동할 때 새 버전을 확인하지 않습니다                  |
 
 ---
 
@@ -129,24 +129,24 @@ claude mcp add yesstock \
 
 ## 새 버전 받기
 
-**설치 경로에 따라 방식이 다릅니다.**
+**두 설치 경로가 같은 방식으로 받습니다.** `.mcpb` 든 `npx` 든 커넥터 안에 같은
+업데이터가 들어 있습니다.
 
-**`.mcpb` 로 설치했다면** 커넥터가 스스로 합니다. 기동할 때 이 저장소의 최신 릴리스를
-확인하고, 새 버전이 있으면 받아서 적용합니다. 하루에 한 번만 확인하고, 실패하면 그냥
-현재 버전으로 뜹니다. 받은 파일은 **SHA-256 으로 검증한 뒤에만** 적용하고, 새 버전이
-기동에 실패하면 직전 버전으로 자동으로 되돌립니다.
+기동할 때 이 저장소의 최신 릴리스를 확인하고, 새 버전이 있으면 받아서 적용합니다.
+하루에 한 번만 확인하고, 실패하면 그냥 현재 버전으로 뜹니다. 받은 파일은 **SHA-256 으로
+검증한 뒤에만** 적용하고, 새 버전이 기동에 실패하면 직전 버전으로 자동으로 되돌립니다.
 
-끄려면 커넥터 설정에서 *자동 업데이트 끄기* 를 켜거나 `WEBOPENAPI_NO_UPDATE_CHECKS=1`
-을 줍니다. 폐쇄망이거나 버전을 고정해 배포할 때 필요합니다.
+그래서 `npx` 로 설치했을 때 **npm 캐시가 낡아도 상관없습니다** — 커넥터가 최신 코드를
+직접 받아옵니다.
 
-**npm 으로 설치했다면** `@latest` 가 그 일을 합니다. 설정에서 빼면 캐시에 남은 옛
-버전으로 계속 돌 수 있으니 붙여두세요.
+**끄려면** `.mcpb` 는 커넥터 설정의 *자동 업데이트 끄기* 를, `npx` 는 `env` 에
+`WEBOPENAPI_NO_UPDATE_CHECKS` 를 `"1"` 로 주면 됩니다. 폐쇄망이거나 버전을 고정해
+배포할 때 필요합니다.
 
-반대로 기동할 때 네트워크를 쓰면 안 되는 환경이라면, 전역 설치 후 명령을 고정합니다.
+버전을 아예 박아두려면 주소에서 `latest` 자리를 바꿉니다.
 
-```bash
-npm i -g yesstock-openapi-mcp
-# "command": "yesstock-openapi-mcp", "args": []
+```
+.../releases/download/v0.2.7/yesstock-openapi-mcp.tgz
 ```
 
 ---
@@ -158,12 +158,12 @@ MCP 커넥터는 실패해도 화면에 아무것도 보이지 않습니다. 아
 **도구 4개가 아예 안 보입니다**
 
 - 클라이언트를 **완전히** 종료했다 켰는지 확인하세요 (macOS 는 ⌘Q).
-- `.mcpb` 로 설치했다면 커넥터가 기동 기록을 남깁니다.
+- 커넥터가 기동 기록을 남깁니다. **두 설치 경로 모두 같은 자리입니다.**
   macOS `~/Library/Application Support/yesstock-openapi-mcp/launch.log`
   Windows `%LOCALAPPDATA%\yesstock-openapi-mcp\launch.log`
-- npm 으로 설치했다면 터미널에서 직접 돌려보세요. 같은 내용이 그대로 보입니다.
+- `npx` 로 설치했다면 터미널에서 직접 돌려봐도 됩니다. 같은 내용이 화면에 보입니다.
   ```bash
-  npx -y yesstock-openapi-mcp@latest
+  npx -y https://github.com/narcis25/yesstock-openapi-mcp/releases/latest/download/yesstock-openapi-mcp.tgz
   ```
 
 **`spawn npx ENOENT`**
@@ -180,13 +180,15 @@ Silicon Homebrew 에서 가끔 납니다). `which npx` 결과를 `command` 에 �
 
 ## 릴리스 자산
 
-| 파일                        | 받는 쪽                                   |
-| --------------------------- | ----------------------------------------- |
-| `yesstock-openapi-mcp.mcpb` | 사람. Claude Desktop 설치에 이 파일만 받으면 됩니다 |
-| `payload.mjs`               | 커넥터가 자동 업데이트에 씁니다           |
-| `update.json`               | 커넥터가 버전과 체크섬을 확인합니다       |
+| 파일                        | 받는 쪽                                      |
+| --------------------------- | -------------------------------------------- |
+| `yesstock-openapi-mcp.mcpb` | 사람. Claude Desktop 설치용                  |
+| `yesstock-openapi-mcp.tgz`  | `npx` 가 받아갑니다. 위 설정의 주소가 이것   |
+| `payload.mjs`               | 커넥터가 자동 업데이트에 씁니다              |
+| `update.json`               | 커넥터가 버전과 체크섬을 확인합니다          |
 
-뒤의 둘은 직접 받을 일이 없습니다. npm 경로는 릴리스 자산을 쓰지 않습니다.
+뒤의 둘은 직접 받을 일이 없습니다. **배포는 이곳 하나뿐이고**, 커넥터가 업데이트를
+받아오는 곳도 같은 주소입니다.
 
 ---
 
@@ -194,6 +196,6 @@ Silicon Homebrew 에서 가끔 납니다). `which npx` 결과를 `command` 에 �
 
 [Issues](../../issues) 에 남겨주세요. 다음이 있으면 도움이 됩니다.
 
-- 커넥터 버전과 **설치 방법** (`.mcpb` 인지 npm 인지)
+- 커넥터 버전과 **설치 방법** (`.mcpb` 인지 `npx` 인지)
 - 무엇을 시켰고 무엇이 돌아왔는지
 - 운영체제
